@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { createRef } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import remarkGfm from "remark-gfm";
@@ -11,6 +11,8 @@ const Chat = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<{ message: string; ai: string }[]>([]);
+  const messagesEndRef = createRef() as React.MutableRefObject<HTMLDivElement>;
+  const inputRef = createRef() as React.MutableRefObject<HTMLInputElement>;
   async function getUsers() {
     try {
       const { data } = await axios.get("/api/resource");
@@ -42,7 +44,14 @@ const Chat = () => {
   }
 
   useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    inputRef.current?.focus();
+  }, [messages]);
+
+  useEffect(() => {
     getUsers();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    inputRef.current?.focus();
   }, []);
   return (
     <>
@@ -75,6 +84,7 @@ const Chat = () => {
                 </div>
               );
             })}
+            <div ref={messagesEndRef} />
             {
               messages.length === 0 && (
                 <div className="flex justify-center items-center h-full">
@@ -85,12 +95,14 @@ const Chat = () => {
           </div>
           <div className="w-full border-2 flex justify-between items-center">
             <input
+              ref={inputRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="w-full h-14 px-4 outline-none"
               type="text"
               placeholder="Type a Message"
               disabled={loading}
+              autoFocus
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyDown(e)}
             />
             <button
