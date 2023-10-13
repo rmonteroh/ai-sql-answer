@@ -13,20 +13,28 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const datasource = new DataSource({
-      type: "sqlite",
-      database: "./public/Contructions.db",
+      type: "postgres",
+      host: process.env.POSTGRES_DB_HOST,
+      port: Number(process.env.POSTGRES_DB_PORT),
+      username: process.env.POSTGRES_DB_USER,
+      password: process.env.POSTGRES_DB_PASSWORD,
+      database: process.env.POSTGRES_DB_DATABASE,
     });
+console.log('datasource', datasource);
 
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: datasource,
     });
 
     const schema = await db.getTableInfo();
+    console.log('schema', schema);
+    
 
     if (!schema) {
       throw new Error("No schema found");
       return;
     }
+    
 
     const prompt =
       PromptTemplate.fromTemplate(`Based on the table schema below, write a sqlite SQL query that would answer the user's question:
