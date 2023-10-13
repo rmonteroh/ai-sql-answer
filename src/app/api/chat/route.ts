@@ -1,7 +1,5 @@
-import axios from "axios";
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI, ChatOpenAICallOptions } from "langchain/chat_models/openai";
-import { OpenAI } from "langchain/llms/openai";
 import { PromptTemplate } from "langchain/prompts";
 import { BaseMessageChunk, ChainValues } from "langchain/schema";
 import { StringOutputParser } from "langchain/schema/output_parser";
@@ -10,35 +8,21 @@ import { SqlDatabase } from "langchain/sql_db";
 import { NextRequest, NextResponse } from "next/server";
 import { DataSource } from "typeorm";
 
-export async function GET(request: NextRequest) {
-  try {
-    const { data } = await axios("https://jsonplaceholder.typicode.com/users");
-    console.log("[USERS_GET]", data);
-    return NextResponse.json(data);
-  } catch (error) {
-    console.log("[USERS_GET]", error);
-    return new NextResponse("Internal Error", { status: 500 });
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("[USERS_POST]", body);
-
     const datasource = new DataSource({
       type: "sqlite",
       database: "./public/Contructions.db",
     });
-
 
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: datasource,
     });
 
     const schema = await db.getTableInfo();
-    console.log('schema', schema);
-    
+
     if (!schema) {
       throw new Error("No schema found");
       return;
@@ -56,8 +40,6 @@ SQL Query:`);
       modelName: "gpt-3.5-turbo",
       temperature: 0,
     });
-
-    // console.log('table schema', await db.getTableInfo());
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
       {
@@ -81,10 +63,6 @@ SQL Query:`);
             ...chatResponse
         });
     }
-
-    /*
-  SELECT COUNT(EmployeeId) AS TotalEmployees FROM Employee
-*/
 
     const finalResponsePrompt =
       PromptTemplate.fromTemplate(`Based on the table schema below, question, sqlite sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
@@ -113,8 +91,6 @@ SQL Response: {response}`);
       question: body.message,
     });
     console.log('final response', finalResponse.content);
-
-
 
     return NextResponse.json({
         message: body.message,

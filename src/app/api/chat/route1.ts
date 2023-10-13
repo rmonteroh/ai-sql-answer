@@ -1,46 +1,25 @@
-import axios from "axios";
-import { SqlToolkit, createSqlAgent } from "langchain/agents/toolkits/sql";
-import { ConversationChain, LLMChain } from "langchain/chains";
 import { SqlDatabaseChain } from "langchain/chains/sql_db";
-import { ChatOpenAI, ChatOpenAICallOptions } from "langchain/chat_models/openai";
 import { OpenAI } from "langchain/llms/openai";
-import { BufferMemory } from "langchain/memory";
 import { PromptTemplate } from "langchain/prompts";
-import { BaseMessageChunk, ChainValues } from "langchain/schema";
-import { StringOutputParser } from "langchain/schema/output_parser";
-import { RunnableSequence } from "langchain/schema/runnable";
 import { SqlDatabase } from "langchain/sql_db";
 import { NextRequest, NextResponse } from "next/server";
 import { DataSource } from "typeorm";
 
-export async function GET(request: NextRequest) {
-  try {
-    const { data } = await axios("https://jsonplaceholder.typicode.com/users");
-    console.log("[USERS_GET]", data);
-    return NextResponse.json(data);
-  } catch (error) {
-    console.log("[USERS_GET]", error);
-    return new NextResponse("Internal Error", { status: 500 });
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    console.log("[USERS_POST]", body);
+    const body = await request.json()
 
     const datasource = new DataSource({
       type: "sqlite",
       database: "./public/Contructions.db",
     });
 
-
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: datasource,
     });
 
     const model = new OpenAI({ 
-      openAIApiKey: "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",
+      openAIApiKey: "",
       modelName: "gpt-3.5-turbo",
       temperature: 0,
      });

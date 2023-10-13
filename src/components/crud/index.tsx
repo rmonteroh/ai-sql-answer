@@ -32,7 +32,7 @@ type Assignment = {
   assignment_duration: number;
 };
 
-const Crud = (props: Props) => {
+const Crud = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [tasks, setTasks] = useState<Tasks[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);

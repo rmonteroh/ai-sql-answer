@@ -6,9 +6,7 @@ import remarkGfm from "remark-gfm";
 import Markdown from "react-markdown";
 import { MessagesSquare, X, SendHorizontal, Loader } from "lucide-react";
 
-type Props = {};
-
-const Chat = (props: Props) => {
+const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -16,7 +14,6 @@ const Chat = (props: Props) => {
   async function getUsers() {
     try {
       const { data } = await axios.get("/api/resource");
-      console.log("data", data);
     } catch (error) {
       console.log(error);
     }
@@ -29,15 +26,8 @@ const Chat = (props: Props) => {
 
       setMessage("");
       let newMessages = [...messages];
-      console.log("newMessages", newMessages);
       const lastMessages = newMessages.slice(-3);
       const { data } = await axios.post("/api/chat", { message, history: lastMessages });
-      console.log("data", data);
-      /* newMessages[messages.length - 1] = data as {
-        message: string;
-        ai: string;
-      }; */
-
       setMessages([...newMessages, data]);
       setLoading(false);
     } catch (error) {
