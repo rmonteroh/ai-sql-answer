@@ -74,11 +74,11 @@ SQL Query:`);
 
     const finalResponsePrompt =
       PromptTemplate.fromTemplate(`Based on the table schema below, question, postgres sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
-{schema}
+        {schema}
 
-Question: {question}
-SQL Query: {query}
-SQL Response: {response}`);
+        Question: {question}
+        SQL Query: {query}
+        SQL Response: {response}`);
 
     const fullChain = RunnableSequence.from([
       {
@@ -105,7 +105,7 @@ SQL Response: {response}`);
         ai: finalResponse.content
     });
   } catch (error) {
-    console.log("[USERS_POST]", error);
+    console.log("[USERS_POST123]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
