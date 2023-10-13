@@ -1,9 +1,18 @@
-"use client"
+"use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 type Project = {
-    project_id: number;
+  project_id: number;
   project_name: string;
 };
 
@@ -61,88 +70,87 @@ const Crud = (props: Props) => {
     handleGetAssignments();
   }, []);
   return (
-    <div className="flex flex-col justify-start items-start gap-3">
+    <div className="flex flex-col justify-center items-start gap-6 divide-y-2">
       {projects.length > 0 && (
-        <div className="">
-            <h2>Project list</h2>
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th>id</th>
-                <th>Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.map((project, index) => {
-                return (
-                  <tr key={`pr_${index}`} className="text-center border">
-                    <td>{project.project_id}</td>
-                    <td>{project.project_name}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="w-full p-8 shadow-xl mb-4">
+          <h2 className="text-2xl font-medium">Project list</h2>
+          <Table className="">
+            <TableCaption>A list of your projects</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>id</TableHead>
+                <TableHead>Name</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {projects.map((project, index) => (
+                <TableRow key={`pr_${index}`}>
+                  <TableCell className="font-medium">
+                    {project.project_id}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {project.project_name}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
       {tasks.length > 0 && (
-        <div className="w-full">
-            <h2>Tasks list</h2>
-          <table className="w-full">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Project Id</th>
-                <th>Commencement</th>
-                <th>Conclusion</th>
-                <th>Duration</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                tasks.map((task, index) => {
-                  return <tr key={`tsk_${index}`} className="text-center border">
-                    <td>{task.task_id}</td>
-                    <td>{task.task_name}</td>
-                    <td>{task.project_id}</td>
-                    <td>{task.commencement_date}</td>
-                    <td>{task.conclusion_date}</td>
-                    <td>{task.duration}</td>
-                  </tr>
-                })
-              }
-            </tbody>
-          </table>
+        <div className="w-full p-8 shadow-xl mb-4">
+          <h2 className="text-2xl font-medium">Tasks list</h2>
+          <Table className="w-full">
+          <TableHeader>
+              <TableRow>
+                <TableHead>Id</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Project</TableHead>
+                <TableHead>Commencement</TableHead>
+                <TableHead>Conclusion</TableHead>
+                <TableHead>Duration</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {tasks.map((task, index) => (
+                <TableRow key={`tsk_${index}`}>
+                  <TableCell>{task.task_id}</TableCell>
+                    <TableCell>{task.task_name}</TableCell>
+                    <TableCell>{projects[task.project_id - 1].project_name}</TableCell>
+                    <TableCell>{task.commencement_date}</TableCell>
+                    <TableCell>{task.conclusion_date}</TableCell>
+                    <TableCell>{task.duration}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
-      {
-        assignments.length > 0 && (
-          <div className="">
-            <h2>Assignment list</h2>
-            <table className="">
-              <thead>
-                <tr>
-                  <th>Task Id</th>
-                  <th>Name</th>
-                  <th>Duration</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  assignments.map((assignment, index) => {
-                    return <tr key={index} className="text-center border">
-                      <td>{assignment.task_id}</td>
-                      <td>{assignment.resource_name}</td>
-                      <td>{assignment.assignment_duration}</td>
-                    </tr>
-                  })
-                }
-              </tbody>
-            </table>
-          </div>
-        )
-      }
+      {assignments.length > 0 && (
+        <div className="w-full  p-8 shadow-xl mb-4">
+          <h2 className="text-2xl font-medium">Assignment list</h2>
+          <Table className="">
+            <TableHeader>
+              <TableRow>
+                <TableHead>Task</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Duration</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {assignments.map((assignment, index) => {
+                return (
+                  <TableRow key={index} >
+                    <TableCell>{tasks[assignment.task_id - 1].task_name}</TableCell>
+                    <TableCell>{assignment.resource_name}</TableCell>
+                    <TableCell>{assignment.assignment_duration}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };

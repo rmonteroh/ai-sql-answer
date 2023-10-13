@@ -52,7 +52,7 @@ Question: {question}
 SQL Query:`);
 
     const model: ChatOpenAI<ChatOpenAICallOptions> = new ChatOpenAI({
-      openAIApiKey: "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",
+      openAIApiKey: process.env.OPENAI_API_KEY,
       modelName: "gpt-3.5-turbo",
       temperature: 0,
     });
