@@ -18,6 +18,11 @@ const Chat = () => {
       console.log(error);
     }
   }
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === 'Enter'){
+      sendChat();
+    }
+  };
   async function sendChat() {
     try {
       setLoading(true);
@@ -70,6 +75,13 @@ const Chat = () => {
                 </div>
               );
             })}
+            {
+              messages.length === 0 && (
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-lg text-gray-500">Hi! How can I help you today?</p>
+                </div>
+              )
+            }
           </div>
           <div className="w-full border-2 flex justify-between items-center">
             <input
@@ -79,6 +91,7 @@ const Chat = () => {
               type="text"
               placeholder="Type a Message"
               disabled={loading}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyDown(e)}
             />
             <button
               onClick={() => sendChat()}
