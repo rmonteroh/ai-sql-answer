@@ -52,7 +52,7 @@ Question: {question}
 SQL Query:`);
 
     const model: ChatOpenAI<ChatOpenAICallOptions> = new ChatOpenAI({
-      openAIApiKey: "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",
+      openAIApiKey: "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",
       modelName: "gpt-3.5-turbo",
       temperature: 0,
     });
@@ -87,7 +87,7 @@ SQL Query:`);
 */
 
     const finalResponsePrompt =
-      PromptTemplate.fromTemplate(`Based on the table schema below, question, sqlite sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format, if there are no data, please write a short message to express that there are no data:
+      PromptTemplate.fromTemplate(`Based on the table schema below, question, sqlite sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
 {schema}
 
 Question: {question}
@@ -118,7 +118,7 @@ SQL Response: {response}`);
 
     return NextResponse.json({
         message: body.message,
-        ai: finalResponse.content.replaceAll('\n\n', '\n')
+        ai: finalResponse.content
     });
   } catch (error) {
     console.log("[USERS_POST]", error);
