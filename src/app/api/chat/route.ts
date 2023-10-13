@@ -1,3 +1,5 @@
+export const maxDuration = 30;
+export const dynamic = 'force-dynamic';
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI, ChatOpenAICallOptions } from "langchain/chat_models/openai";
 import { PromptTemplate } from "langchain/prompts";
@@ -7,7 +9,6 @@ import { RunnableSequence } from "langchain/schema/runnable";
 import { SqlDatabase } from "langchain/sql_db";
 import { NextRequest, NextResponse } from "next/server";
 import { DataSource } from "typeorm";
-
 
 export async function POST(request: NextRequest) {
   try {
