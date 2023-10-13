@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const datasource = new DataSource({
       type: "sqlite",
-      database: "./Contructions.db",
+      database: "./public/Contructions.db",
     });
 
     const db = await SqlDatabase.fromDataSourceParams({
