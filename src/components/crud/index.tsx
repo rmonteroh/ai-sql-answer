@@ -116,7 +116,7 @@ const Crud = () => {
                 <TableRow key={`tsk_${index}`}>
                   <TableCell>{task.task_id}</TableCell>
                     <TableCell>{task.task_name}</TableCell>
-                    <TableCell>{projects[task.project_id - 1].project_name}</TableCell>
+                    <TableCell>{projects[task.project_id - 1]?.project_name}</TableCell>
                     <TableCell>{task.commencement_date}</TableCell>
                     <TableCell>{task.conclusion_date}</TableCell>
                     <TableCell>{task.duration}</TableCell>
@@ -141,7 +141,7 @@ const Crud = () => {
               {assignments.map((assignment, index) => {
                 return (
                   <TableRow key={index} >
-                    <TableCell>{tasks[assignment.task_id - 1].task_name}</TableCell>
+                    <TableCell>{tasks[assignment.task_id - 1]?.task_name}</TableCell>
                     <TableCell>{assignment.resource_name}</TableCell>
                     <TableCell>{assignment.assignment_duration}</TableCell>
                   </TableRow>
