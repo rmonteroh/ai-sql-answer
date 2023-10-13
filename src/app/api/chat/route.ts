@@ -37,7 +37,7 @@ console.log('datasource', datasource);
     
 
     const prompt =
-      PromptTemplate.fromTemplate(`Based on the table schema below, write a sqlite SQL query that would answer the user's question:
+      PromptTemplate.fromTemplate(`Based on the table schema below, write a postgres SQL query that would answer the user's question:
 {schema}
 
 Question: {question}
@@ -73,7 +73,7 @@ SQL Query:`);
     }
 
     const finalResponsePrompt =
-      PromptTemplate.fromTemplate(`Based on the table schema below, question, sqlite sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
+      PromptTemplate.fromTemplate(`Based on the table schema below, question, postgres sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
 {schema}
 
 Question: {question}
