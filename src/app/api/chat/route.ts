@@ -1,5 +1,4 @@
-export const maxDuration = 180;
-export const dynamic = 'force-dynamic';
+
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI, ChatOpenAICallOptions } from "langchain/chat_models/openai";
 import { PromptTemplate } from "langchain/prompts";
