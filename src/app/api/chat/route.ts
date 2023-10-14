@@ -1,4 +1,5 @@
 
+import { getDbSchema } from "@/lib/db";
 import { LLMChain } from "langchain/chains";
 import { ChatOpenAI, ChatOpenAICallOptions } from "langchain/chat_models/openai";
 import { PromptTemplate } from "langchain/prompts";
@@ -9,6 +10,7 @@ import { SqlDatabase } from "langchain/sql_db";
 import { NextRequest, NextResponse } from "next/server";
 import { DataSource } from "typeorm";
 
+export const maxDuration = 300;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -25,6 +27,7 @@ console.log('datasource', datasource);
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: datasource,
     });
+    // const db = await getDbSchema();
 
     const schema = await db.getTableInfo();
     console.log('schema', schema);
