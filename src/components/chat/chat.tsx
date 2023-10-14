@@ -35,6 +35,7 @@ const Chat = () => {
       let newMessages = [...messages];
       const lastMessages = newMessages.slice(-3);
       const { data } = await axios.post("/api/chat", { message, history: lastMessages });
+      // const { data } = await axios.post("/api/conversation", { prompt: message });
       setMessages([...newMessages, data]);
       setLoading(false);
     } catch (error) {

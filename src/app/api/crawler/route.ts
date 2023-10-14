@@ -77,8 +77,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
   
 
   const crawler = new Crawler(urls, crawlLimit, 200);
- /* const pages = (await crawler.start()) as Page[];
-  console.log('pages', pages);
+  const pages = (await crawler.start()) as Page[];
+  // console.log('pages', pages);
   
 
   const documents = await Promise.all(
@@ -105,11 +105,14 @@ export async function GET(req: NextRequest, res: NextResponse) {
       return docs;
     })
   );
+// console.log('documents', documents);
+
 
   const index = pinecone && pinecone.Index(pineconeIndexName);
 
   const embedder = new OpenAIEmbeddings({
     modelName: "text-embedding-ada-002",
+
   });
   let counter = 0;
 
@@ -167,5 +170,5 @@ export async function GET(req: NextRequest, res: NextResponse) {
     }
   } catch (e) {
     console.log(e);
-  } */
+  }
 }

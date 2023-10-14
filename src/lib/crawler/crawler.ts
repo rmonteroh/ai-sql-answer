@@ -2,6 +2,7 @@
 import * as Spider from 'node-spider'
 //@ts-ignore
 import * as  TurndownService from 'turndown'
+import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 import * as cheerio from 'cheerio'
 import parse from 'url-parse'
 // const turndownService = new TurndownService();
@@ -29,11 +30,11 @@ class Crawler {
     this.pages = [];
     this.spider = {}
     console.log('urls', this.urls);
-    this.turndownService = new TurndownService();
+    this.turndownService = new NodeHtmlMarkdown();
     
   }
 
- /*  handleRequest = (doc: any) => {
+  handleRequest = (doc: any) => {
     const $ = cheerio.load(doc.res.body);
     $("script").remove();
     $("#hub-sidebar").remove();
@@ -42,7 +43,7 @@ class Crawler {
     $("img").remove();
     const title = $("title").text() || $(".article-title").text();
     const html = $("body").html();
-    const text = turndownService.turndown(html);
+    const text = this.turndownService.translate(html!);
     console.log("crawling ", doc.url)
     const page: Page = {
       url: doc.url,
@@ -95,7 +96,7 @@ class Crawler {
         this.spider.queue(url, this.handleRequest);
       });
     })
-  } */
+  }
 }
 
 export { Crawler };
