@@ -162,7 +162,7 @@ const handleRequest = async ({
       await initPineconeClient();
     }
 
-    let summarizedCount = 0;
+    // let summarizedCount = 0;
     // Retrieve the conversation log and save the user's prompt
     const conversation = new Conversation();
     const conversationHistory = await conversation.getConversation({
