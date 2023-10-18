@@ -83,34 +83,14 @@ export async function POST(request: NextRequest) {
     
 
     const prompt =
-      PromptTemplate.fromTemplate(`Based on the table schema and chat history below, write a postgres SQL query that would answer the user's question and do not mention that you do a sql query in the answer, to do that you can use the following rules:
-      - If you received this question: 'Can you show me a 2 week lookahead?' or similar question, return the following question: 'Sure, would you like me to list the tasks for the next 2 week?'
-      - If you can not get all data necessary from chat history and table schema to write the query, return a question asking for the missing data.
-      - If the user ask for Sunrise, CPM return 'No Sql needed'
+      PromptTemplate.fromTemplate(`Based on the table schema and chat history below, write a postgres SQL query that would answer the user's question and do not mention that you do a sql query in the answer, if you do not have all data necessary to write:
+{schema}
+{history}
 
-      {schema}
-      {history}
+Question: {question}
+SQL Query:`);
 
-      Question: {question}
-      SQL Query:`);
-   /*  const prompt =
-      PromptTemplate.fromTemplate(`
-      Based on the table schema and chat history below determinate if the user needs to write a sql query to answer the question with the table schema information. If the user does not need to write a sql query, write "I don't need to write a sql query". If the user needs to write a sql query, write the query following the rules bellow:
-      - If you received this question: 'Can you show me a 2 week lookahead?' return the following question: 'Sure, would you like me to list the tasks for the next 2 week?'
-      - If you received this question: 'What is total float?' return the following answer: 'This should be a general definition for anything related to CPM scheduling.  All questions related to CPM scheduling should be addressed.'
-      - If you do not have all data necessary to write the query, return a question asking for the missing data.
-      - The AI do not mention that you do a sql query in the answer.
-      - If you have all data necessary to write the query, return the query.
-      - If the question do not ask for a way to return the data, ex: list or table, ask the user how they would like to receive the data.
-      - The query should be a valid sql query.
-
-      {schema}
-      {history}
-
-      Question: {question}
-      SQL Query:`); */
-
-    console.log('history', JSON.stringify(body.history));
+console.log('history', JSON.stringify(body.history));
 
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
@@ -129,42 +109,18 @@ export async function POST(request: NextRequest) {
     });
 
     console.log('query', result);
-    // Missing data
-    if (result.includes("?")) {
-      return NextResponse.json({
-        message: body.message,
-        ai: result,
-      });
-    }
-    if (result.includes("Response-def")) {
-      return NextResponse.json({
-        message: body.message,
-        ai: result.replaceAll("Response-def", ""),
-      });
-    }
 
     if (!result.startsWith('SELECT')) {
         return await handleRequest({prompt: body.message});
     }
 
     const finalResponsePrompt =
-      PromptTemplate.fromTemplate(`Based on the table schema below, question, postgres sql query, and sql response, write a natural language response following the rules bellow:
-        - If the response is a list or table, please write a response in markdown format when show the list or table in a separate line.
-        - If there are no data, please write a short message to express that there are no data.
-        - The AI will not mention that it is doing a sql query.
-        - The AI will not mention the database schema.
+      PromptTemplate.fromTemplate(`Based on the table schema below, question, postgres sql query, and sql response, write a natural language response, is the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
         {schema}
 
         Question: {question}
         SQL Query: {query}
         SQL Response: {response}`);
-   /*  const finalResponsePrompt =
-      PromptTemplate.fromTemplate(`Based on the table schema below, question, postgres sql query, and sql response, write a natural language response, if the response is a list or table, please write a response in markdown format when show the list or table in a separate line, if there are no data, please write a short message to express that there are no data:
-        {schema}
-
-        Question: {question}
-        SQL Query: {query}
-        SQL Response: {response}`); */
 
     const fullChain = RunnableSequence.from([
       {
