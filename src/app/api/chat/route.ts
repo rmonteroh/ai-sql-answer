@@ -17,13 +17,13 @@ import { StringOutputParser } from "langchain/schema/output_parser";
 import { RunnableSequence } from "langchain/schema/runnable";
 import { SqlDatabase } from "langchain/sql_db";
 import { NextRequest, NextResponse } from "next/server";
-import { DataSource } from "typeorm";
 import {
   chatOpenAI,
   dataSourceInit,
   embedder,
   initPineconeClient,
   llm,
+  pusherInit,
 } from "../../../lib/initializations";
 
 export const maxDuration = 300;
@@ -35,11 +35,12 @@ export async function POST(request: NextRequest) {
     const dataSource = dataSourceInit;
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: dataSource,
-      ignoreTables: ["conversations"],
     });
     const schema = await db.getTableInfo();
     const prompt = PromptTemplate.fromTemplate(templates.sqlWriterTemplate);
     console.log("history", JSON.stringify(body.history));
+    // Analyze the question and generate a sql query
+    pusherInit.trigger("process-status", 'status-update', {message: 'Analyzing question and context...'});
 
     const sqlQueryGeneratorChain = RunnableSequence.from([
       {
@@ -55,6 +56,8 @@ export async function POST(request: NextRequest) {
     const result = await sqlQueryGeneratorChain.invoke({
       question: body.message,
     });
+    // Processing the question
+    pusherInit.trigger("process-status", 'status-update', {message: 'Processing question...'});
 
     console.log("query", result);
     // Missing data
@@ -74,9 +77,11 @@ export async function POST(request: NextRequest) {
 
     // Check Sunrise website data
     if (!result.startsWith("SELECT")) {
+      // Check Sunrises website information
+      pusherInit.trigger("process-status", 'status-update', {message: 'Checking Sunrise website information...'});
       return await handleRequest({ prompt: body.message });
     }
-
+    pusherInit.trigger("process-status", 'status-update', {message: 'Searching in database...'});
     const finalResponsePrompt = PromptTemplate.fromTemplate(
       templates.sqlExecutorTemplate
     );
@@ -99,6 +104,8 @@ export async function POST(request: NextRequest) {
 
               console.timeEnd("SQL");
               console.time("OpenAI");
+              // Data constructed from database
+              pusherInit.trigger("process-status", 'status-update', {message: 'Processing data before send answer...'});
               return res;
             })
             .catch((err) => {
