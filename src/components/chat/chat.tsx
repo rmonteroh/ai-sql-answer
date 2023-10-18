@@ -84,8 +84,9 @@ const Chat = () => {
                             {message.ai}
                           </Markdown>
                         </div>
-                      ): (<span>Searching...</span>)}
+                      ): (<span className="text-gray-500 text-sm">Processing... </span>)}
                       <Bot />
+                      
                     </div>
                   </div>
                 </div>

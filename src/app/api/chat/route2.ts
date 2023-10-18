@@ -128,7 +128,7 @@ console.log('history', JSON.stringify(body.history));
         query: sqlQueryGeneratorChain,
       },
       {
-        schema: async () => templates.dbSchema,
+        schema: () => schema,
         question: (input) => input.question,
         query: (input) => input.query,
         response: (input) => {
