@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { createRef } from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import remarkGfm from "remark-gfm";
 import Markdown from "react-markdown";
-import { MessagesSquare, X, SendHorizontal, Loader } from "lucide-react";
+import { MessagesSquare, X, SendHorizontal, Loader, Bot, Trash, User2 } from "lucide-react";
 
 const Chat = () => {
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,6 @@ const Chat = () => {
       let newMessages = [...messages];
       const lastMessages = newMessages.slice(-3);
       const { data } = await axios.post("/api/chat", { message, history: lastMessages });
-      // const { data } = await axios.post("/api/conversation", { prompt: message });
       setMessages([...newMessages, data]);
       setLoading(false);
     } catch (error) {
@@ -60,7 +60,12 @@ const Chat = () => {
         <div className="fixed bottom-3 right-3 min-w-[400px] max-w-[670px] h-[680px] bg-white flex flex-col items-start justify-between font-mono border-2">
           <div className="px-2 flex justify-between items-center w-full">
             <h2 className="my-2 text-xl">Chatbot POC</h2>
-            <X onClick={() => setOpen(!open)} />
+            <div className="flex justify-end items-center gap-2">
+              {/* Clear chat history */}
+              <Trash className="cursor-pointer" onClick={() => setMessages([])} />
+              {/* Close chat */}
+              <X className="cursor-pointer" onClick={() => setOpen(!open)} />
+            </div>
           </div>
           <div className="flex-grow bg-gray-200 w-full p-4 overflow-y-auto">
             {messages.map((message, index) => {
@@ -72,14 +77,15 @@ const Chat = () => {
                         {message.message}
                       </p>
                     </div>
-                    <div className="flex justify-end items-center">
-                      {message.ai && (
+                    <div className="flex justify-end items-center gap-1">
+                      {message.ai ? (
                         <div className="overflow-x-auto text-sm text-white bg-black rounded-xl max-w-[95%] rounded-br-none py-2 px-2.5 w-fit">
                           <Markdown remarkPlugins={[remarkGfm]}>
                             {message.ai}
                           </Markdown>
                         </div>
-                      )}
+                      ): (<span>Searching...</span>)}
+                      <Bot />
                     </div>
                   </div>
                 </div>
