@@ -68,7 +68,44 @@ const templates = {
   
       Final answer:
       `,
-    summerierTemplate: `Summarize the following text. You should follow the following rules when generating and answer:`
+    summerierTemplate: `Summarize the following text. You should follow the following rules when generating and answer:`,
+    dbSchema: `CREATE TABLE "public"."conversations" (
+      id bigint NOT NULL, created_at timestamp with time zone NOT NULL, entry character varying , speaker character varying ) 
+      SELECT * FROM "public"."conversations" LIMIT 3;
+       id created_at entry speaker
+      CREATE TABLE "public"."logic" (
+      logic_id integer NOT NULL, prerequisite_task_id integer , dependent_task_id integer ) 
+      SELECT * FROM "public"."logic" LIMIT 3;
+       logic_id prerequisite_task_id dependent_task_id
+       1 1 2
+       2 2 3
+       3 3 4
+      CREATE TABLE "public"."projects" (
+      project_id integer NOT NULL, project_name character varying ) 
+      SELECT * FROM "public"."projects" LIMIT 3;
+       project_id project_name
+       1 High-rise Building Construction Project
+       2 Residential Complex Construction Project
+       3 Bridge Construction Project
+      CREATE TABLE "public"."resource_assignments" (
+      assignment_id integer NOT NULL, task_id integer , resource_name character varying , assignment_duration integer ) 
+      SELECT * FROM "public"."resource_assignments" LIMIT 3;
+       assignment_id task_id resource_name assignment_duration
+       1 1 Excavator Operator 2
+       2 2 Construction Worker 2
+       3 3 Bricklayer 2
+      CREATE TABLE "public"."tasks" (
+      task_id integer NOT NULL, task_name character varying , project_id integer , commencement_date date , conclusion_date date , duration integer ) 
+      SELECT * FROM "public"."tasks" LIMIT 3;
+       task_id task_name project_id commencement_date conclusion_date duration
+       1 Excavation 1 Wed Oct 11 2023 00:00:00 GMT-0500 (Eastern Standard Time) Sat Oct 14 2023 00:00:00 GMT-0500 (Eastern Standard Time) 3
+       2 Foundation Construction 1 Wed Oct 18 2023 00:00:00 GMT-0500 (Eastern Standard Time) Sat Oct 21 2023 00:00:00 GMT-0500 (Eastern Standard Time) 3
+       3 Wall Construction 1 Wed Oct 25 2023 00:00:00 GMT-0500 (Eastern Standard Time) Sat Oct 28 2023 00:00:00 GMT-0500 (Eastern Standard Time) 3
+      `,
+      // Create an sql query base on the conversation bellow
+      conversationTemplate: `Answer the question based on the context below. You should determinate if with the following database schema you can create a query that answers the question. If you can, write the query. If you can't, write "I can't".:
+        - Database schema: {dbSchema}
+      `,
   }
   
   export { templates }
