@@ -73,7 +73,6 @@ const templates = {
     conversationTemplate: `Answer the question based on the context below. You should determinate if with the following database schema you can create a query that answers the question. If you can, write the query. If you can't, write "I can't".:
       - Database schema: {dbSchema}`,
     sqlWriterTemplate: `Based on the table schema and chat history below, write a postgres SQL query that would answer the user's question and do not mention that you do a sql query in the answer, to do that you can use the following rules:
-    - If you received this question: 'Can you show me a 2 week lookahead?' or similar question, return the following question: 'Sure, would you like me to list the tasks for the next 2 week?'
     - If you can not get all data necessary from chat history and table schema to write the query, return a question asking for the missing data.
     - If the user ask for Sunrise, CPM return 'No Sql needed'
 
