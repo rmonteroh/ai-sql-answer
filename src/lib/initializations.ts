@@ -2,6 +2,7 @@ import { PineconeClient } from "@pinecone-database/pinecone";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { OpenAI } from "langchain/llms/openai";
+import Pusher from "pusher";
 import { DataSource } from "typeorm";
 
 export const llm = new OpenAI({
@@ -37,4 +38,11 @@ export const chatOpenAI = new ChatOpenAI({
     username: process.env.POSTGRES_DB_USER,
     password: process.env.POSTGRES_DB_PASSWORD,
     database: process.env.POSTGRES_DB_DATABASE,
+  });
+
+  export const pusherInit = new Pusher({
+    appId: process.env.PUSHER_APP_ID || '',
+    key: process.env.PUSHER_APP_KEY || '',
+    secret: process.env.PUSHER_APP_SECRET || '',
+    cluster: process.env.PUSHER_APP_CLUSTER || '',
   });

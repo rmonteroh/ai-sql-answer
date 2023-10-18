@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import remarkGfm from "remark-gfm";
 import Markdown from "react-markdown";
 import { MessagesSquare, X, SendHorizontal, Loader, Bot, Trash, User2 } from "lucide-react";
+import Pusher from "pusher-js";
 
 const Chat = () => {
+  const [realMsg, setRealMsg] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -34,10 +36,11 @@ const Chat = () => {
 
       setMessage("");
       let newMessages = [...messages];
-      const lastMessages = newMessages.slice(-3);
+      const lastMessages = newMessages.slice(-5);
       const { data } = await axios.post("/api/chat", { message, history: lastMessages });
       setMessages([...newMessages, data]);
       setLoading(false);
+      setRealMsg('');
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -53,6 +56,17 @@ const Chat = () => {
     getUsers();
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     inputRef.current?.focus();
+
+    var pusher = new Pusher('cdade7dc808a6745c219', {
+      cluster: 'us2'
+    });
+    var channel = pusher.subscribe('process-status');
+    channel.bind('status-update', function(data: {message: string}) {
+      // alert(JSON.stringify(data));
+      if (data.message !== realMsg) {
+        setRealMsg(data.message);
+      }
+    });
   }, []);
   return (
     <>
@@ -84,7 +98,7 @@ const Chat = () => {
                             {message.ai}
                           </Markdown>
                         </div>
-                      ): (<span className="text-gray-500 text-sm">Processing... </span>)}
+                      ): (<span className="text-gray-500 text-sm">{realMsg ? realMsg : 'Processing...'} </span>)}
                       <Bot />
                       
                     </div>

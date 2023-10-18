@@ -77,6 +77,7 @@ const templates = {
     - If you can not get all data necessary from chat history and table schema to write the query, return a question asking for the missing data.
     - If the user ask for Sunrise, CPM return 'No Sql needed'
 
+
     {schema}
     {history}
 
