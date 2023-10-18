@@ -2,6 +2,7 @@ import { PineconeClient } from "@pinecone-database/pinecone";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { OpenAI } from "langchain/llms/openai";
+import { DataSource } from "typeorm";
 
 export const llm = new OpenAI({
   openAIApiKey: process.env.OPENAI_API_KEY,
@@ -26,4 +27,14 @@ export const embedder = new OpenAIEmbeddings({
 export const chatOpenAI = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
     openAIApiKey: process.env.OPENAI_API_KEY,
+    temperature: 0,
+  });
+
+  export const dataSourceInit = new DataSource({
+    type: "postgres",
+    host: process.env.POSTGRES_DB_HOST,
+    port: Number(process.env.POSTGRES_DB_PORT),
+    username: process.env.POSTGRES_DB_USER,
+    password: process.env.POSTGRES_DB_PASSWORD,
+    database: process.env.POSTGRES_DB_DATABASE,
   });
