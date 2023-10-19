@@ -35,9 +35,27 @@ export async function POST(request: NextRequest) {
     const dataSource = dataSourceInit;
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: dataSource,
+      includesTables: ['logic', 'projects', 'tasks', 'resource_assignments']
     });
     const schema = await db.getTableInfo();
-    const prompt = PromptTemplate.fromTemplate(templates.sqlWriterTemplate);
+    // const prompt = PromptTemplate.fromTemplate(templates.sqlWriterTemplate);
+
+    const prompt =
+    PromptTemplate.fromTemplate(`Based on the table schema and history below write a postgres sql query following the rules bellow:
+      - If you received this question: 'Can you show me a 2 week lookahead?' return the following question: 'Sure, would you like me to list the tasks for the next 2 week?'
+      - If you received this question: 'What is total float?' return the following answer: 'This should be a general definition for anything related to CPM scheduling.  All questions related to CPM scheduling should be addressed.'
+      - If you do not have all data necessary to write the query, return a question asking for the missing data.
+      - Do not mention that you do a sql query in the answer.
+      - If you have all data necessary to write the query, return the query.
+      - If the question do not ask for a way to return the data, ex: list or table, ask the user how they would like to receive the data.
+
+      {schema}
+      {history}
+      
+      Question: {question}
+      SQL Query:`);
+
+
     console.log("history", JSON.stringify(body.history));
     // Analyze the question and generate a sql query
     pusherInit.trigger("process-status", 'status-update', {message: 'Analyzing question and context...'});
