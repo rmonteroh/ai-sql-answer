@@ -69,29 +69,28 @@ const templates = {
       Final answer:
       `,
     summerierTemplate: `Summarize the following text. You should follow the following rules when generating and answer:`,
-      // Create an sql query base on the conversation bellow
     conversationTemplate: `Answer the question based on the context below. You should determinate if with the following database schema you can create a query that answers the question. If you can, write the query. If you can't, write "I can't".:
       - Database schema: {dbSchema}`,
-    sqlWriterTemplate: `Based on the table schema and chat history below, write a postgres SQL query that would answer the user's question and do not mention that you do a sql query in the answer, to do that you can use the following rules:
-    - If you can not get all data necessary from chat history and table schema to write the query, return a question asking for the missing data.
-    - If the user ask for Sunrise, CPM return 'No Sql needed'
+    sqlWriterTemplate: `Based on the table schema, question and chat history below, write a postgres SQL query that would answer the user's question. You should follow ALL the following rules when generating and answer:
+      - Do not mention that you do a sql query in the answer
+      - If you can not get all data necessary from chat history and table schema to write the query, return a question asking for the missing data.
+      - If the user ask for Sunrise, floats or CPM return 'No Sql needed'
 
+        {schema}
+        {history}
 
-    {schema}
-    {history}
-
-    Question: {question}
-    SQL Query:`,
+        Question: {question}
+        SQL Query:`,
     sqlExecutorTemplate: `Based on the table schema below, question, postgres sql query, and sql response, write a natural language response following the rules bellow:
-    - If the response is a list or table, please write a response in markdown format when show the list or table in a separate line.
-    - If there are no data, please write a short message to express that there are no data.
-    - The AI will not mention that it is doing a sql query.
-    - The AI will not mention the database schema.
-    {schema}
+      - If the response is a list or table, please write a response in markdown format when show the list or table in a separate line.
+      - If there are no data, please write a short message to express that there are no data.
+      - The AI will not mention that it is doing a sql query.
+      - The AI will not mention the database schema.
+      {schema}
 
-    Question: {question}
-    SQL Query: {query}
-    SQL Response: {response}`
+      Question: {question}
+      SQL Query: {query}
+      SQL Response: {response}`
   }
   
   export { templates }

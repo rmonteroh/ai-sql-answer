@@ -29,15 +29,37 @@ import {
 export const maxDuration = 300;
 export async function POST(request: NextRequest) {
   console.time("POST");
-  const body = await request.json();
+  const body: {message: string, history: { message: string; ai: string }[]} = await request.json();
   const model: ChatOpenAI<ChatOpenAICallOptions> = chatOpenAI;
   try {
     const dataSource = dataSourceInit;
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: dataSource,
+      includesTables: ['logic', 'projects', 'tasks', 'resource_assignments']
     });
     const schema = await db.getTableInfo();
-    const prompt = PromptTemplate.fromTemplate(templates.sqlWriterTemplate);
+    // const prompt = PromptTemplate.fromTemplate(templates.sqlWriterTemplate);
+
+    const prompt =
+    PromptTemplate.fromTemplate(`Based on the table schema and history below write a postgres sql query following the rules bellow:
+      - If project is not mentioned in the question or in the history, do not filter by project, do not add the project to the query.
+      - If you received this question: 'Can you show me a 2 week lookahead?' return the following question: 'Sure, would you like me to list the tasks for the next 2 week?'
+      - If you received this question: 'What is total float?' return the following answer: 'Response-def This should be a general definition for anything related to CPM scheduling.  All questions related to CPM scheduling should be addressed.'
+      - If you received this question: 'When do I need a construction hoist on my project' return the following answer: 'Response-def It would have to know the location of the building and the code in that area to answer the question.  In NYC you need a hoist on the building when the working deck reaches 75’.'
+      - Do not mention that you do a sql query in the answer
+      - If you received this question: 'Can you create a breakout schedule for concrete and electrical activities? I only want to see construction activities.' return the following query: SELECT t.task_name, t.start_date, t.end_date
+          FROM tasks t
+          JOIN projects p ON t.project_id = p.project_id
+          WHERE p.project_name LIKE '%Construction%'
+          AND (t.task_name LIKE '%Concrete%' OR t.task_name LIKE '%Electrical%')'
+
+      {schema}
+      {history}
+      
+      Question: {question}
+      SQL Query:`);
+
+
     console.log("history", JSON.stringify(body.history));
     // Analyze the question and generate a sql query
     pusherInit.trigger("process-status", 'status-update', {message: 'Analyzing question and context...'});

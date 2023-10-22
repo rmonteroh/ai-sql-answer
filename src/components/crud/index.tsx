@@ -132,18 +132,16 @@ const Crud = () => {
           <Table className="">
             <TableHeader>
               <TableRow>
-                <TableHead>Task</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Duration</TableHead>
+                <TableHead>Task</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {assignments.map((assignment, index) => {
                 return (
                   <TableRow key={index} >
-                    <TableCell>{tasks[assignment.task_id - 1]?.task_name}</TableCell>
                     <TableCell>{assignment.resource_name}</TableCell>
-                    <TableCell>{assignment.assignment_duration}</TableCell>
+                    <TableCell>{tasks[assignment.task_id - 1]?.task_name}</TableCell>
                   </TableRow>
                 );
               })}

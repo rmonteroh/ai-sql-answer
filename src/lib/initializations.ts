@@ -28,7 +28,7 @@ export const embedder = new OpenAIEmbeddings({
 export const chatOpenAI = new ChatOpenAI({
     modelName: "gpt-3.5-turbo",
     openAIApiKey: process.env.OPENAI_API_KEY,
-    temperature: 0,
+    temperature: 0.3,
   });
 
   export const dataSourceInit = new DataSource({

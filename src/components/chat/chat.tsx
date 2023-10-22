@@ -87,13 +87,13 @@ const Chat = () => {
                 <div key={index} className="flex flex-col mb-4">
                   <div className="flex justify-between flex-col gap-4">
                     <div className="flex justify-start items-center overflow-x-auto">
-                      <p className="flex text-sm bg-white rounded-xl rounded-bl-none py-2 px-2.5 max-w-[70%] min-w-[60px] w-fit">
+                      <p className="flex text-sm bg-white rounded-xl rounded-bl-none py-2 px-2.5 max-w-[70%] min-w-[60px] w-fit shadow-2xl">
                         {message.message}
                       </p>
                     </div>
                     <div className="flex justify-end items-center gap-1">
                       {message.ai ? (
-                        <div className="overflow-x-auto text-sm text-white bg-black rounded-xl max-w-[95%] rounded-br-none py-2 px-2.5 w-fit">
+                        <div className="overflow-x-auto text-sm text-white bg-gray-950 rounded-xl max-w-[95%] rounded-br-none py-2 px-2.5 w-fit shadow-2xl">
                           <Markdown remarkPlugins={[remarkGfm]}>
                             {message.ai}
                           </Markdown>
