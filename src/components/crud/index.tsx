@@ -20,8 +20,8 @@ type Tasks = {
   task_id: number;
   task_name: string;
   project_id: number;
-  commencement_date: string;
-  conclusion_date: string;
+  start_date: string;
+  end_date: string;
   duration: number;
 };
 
@@ -106,8 +106,8 @@ const Crud = () => {
                 <TableHead>Id</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Project</TableHead>
-                <TableHead>Commencement</TableHead>
-                <TableHead>Conclusion</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead>End Date</TableHead>
                 <TableHead>Duration</TableHead>
               </TableRow>
             </TableHeader>
@@ -117,8 +117,8 @@ const Crud = () => {
                   <TableCell>{task.task_id}</TableCell>
                     <TableCell>{task.task_name}</TableCell>
                     <TableCell>{projects[task.project_id - 1]?.project_name}</TableCell>
-                    <TableCell>{task.commencement_date}</TableCell>
-                    <TableCell>{task.conclusion_date}</TableCell>
+                    <TableCell>{task.start_date}</TableCell>
+                    <TableCell>{task.end_date}</TableCell>
                     <TableCell>{task.duration}</TableCell>
                 </TableRow>
               ))}
