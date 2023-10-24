@@ -11,7 +11,9 @@ import {
   PromptTemplate,
 } from "langchain/prompts";
 import {
-  BaseMessageChunk,
+  AIMessage,
+  BaseMessage,
+  BaseMessageChunk, HumanMessage,
 } from "langchain/schema";
 import { StringOutputParser } from "langchain/schema/output_parser";
 import { RunnableSequence } from "langchain/schema/runnable";
@@ -25,6 +27,7 @@ import {
   llm,
   pusherInit,
 } from "../../../lib/initializations";
+import { BufferMemory, ChatMessageHistory } from "langchain/memory";
 
 export const maxDuration = 300;
 export async function POST(request: NextRequest) {
@@ -40,6 +43,23 @@ export async function POST(request: NextRequest) {
     const schema = await db.getTableInfo();
     // const prompt = PromptTemplate.fromTemplate(templates.sqlWriterTemplate);
 
+    // Create memory
+    const pastMessages: BaseMessage[] = [];
+    if (body.history.length) {
+      body.history.forEach((message) => {
+        pastMessages.push(new HumanMessage({ content: message.message }));
+        pastMessages.push(new AIMessage({ content: message.ai }));
+      });
+    }
+
+    const memory = new BufferMemory({
+      chatHistory: new ChatMessageHistory(pastMessages),
+    });
+
+    // Get conversation history
+    const history = await memory.loadMemoryVariables({});
+    
+
     const prompt =
     PromptTemplate.fromTemplate(`Based on the table schema and history below write a postgres sql query following the rules bellow:
       - If project is not mentioned in the question or in the history, do not filter by project, do not add the project to the query.
@@ -47,6 +67,7 @@ export async function POST(request: NextRequest) {
       - If you received this question: 'What is total float?' return the following answer: 'Response-def This should be a general definition for anything related to CPM scheduling.  All questions related to CPM scheduling should be addressed.'
       - If you received this question: 'When do I need a construction hoist on my project' return the following answer: 'Response-def It would have to know the location of the building and the code in that area to answer the question.  In NYC you need a hoist on the building when the working deck reaches 75’.'
       - Do not mention that you do a sql query in the answer
+      - If the user ask for Sunrise, floats or CPM return 'No Sql needed'
       - If you received this question: 'Can you create a breakout schedule for concrete and electrical activities? I only want to see construction activities.' return the following query: SELECT t.task_name, t.start_date, t.end_date
           FROM tasks t
           JOIN projects p ON t.project_id = p.project_id
@@ -67,7 +88,8 @@ export async function POST(request: NextRequest) {
     const sqlQueryGeneratorChain = RunnableSequence.from([
       {
         schema: () => schema,
-        history: () => JSON.stringify(body.history),
+        // history: () => JSON.stringify(body.history),
+        history: () => history.history,
         question: (input) => input.question,
       },
       prompt,
@@ -118,20 +140,15 @@ export async function POST(request: NextRequest) {
         question: (input) => input.question,
         query: (input) => input.query,
         response: (input) => {
-          console.time("SQL");
           return db
             .run(input.query)
             .then((res) => {
               console.log("res", res);
-
-              console.timeEnd("SQL");
-              console.time("OpenAI");
               // Data constructed from database
               pusherInit.trigger("process-status", 'status-update', {message: 'Processing data before send answer...'});
               return res;
             })
             .catch((err) => {
-              console.timeEnd("SQL");
               return err;
             });
         },
@@ -144,7 +161,6 @@ export async function POST(request: NextRequest) {
       question: body.message,
     });
     console.log("final response", finalResponse.content);
-    console.timeEnd("POST");
     return NextResponse.json({
       message: body.message,
       ai: finalResponse.content,
