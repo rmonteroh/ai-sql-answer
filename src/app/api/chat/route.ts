@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const prompt =
     PromptTemplate.fromTemplate(`Based on the table schema and history below write a postgres sql query following the rules bellow:
       - If project is not mentioned in the question or in the history, do not filter by project, do not add the project to the query.
-      - If you received this question: 'Can you show me a 2 week lookahead?' return the following question: 'Sure, would you like me to list the tasks for the next 2 week?'
+      - If you received this question: 'Can you show me a 2 week lookahead?' return the following query: SELECT t.task_name, t.start_date, t.end_date FROM tasks t WHERE t.start_date >= CURRENT_DATE AND t.start_date <= CURRENT_DATE + INTERVAL '2 weeks'
       - If you received this question: 'What is total float?' return the following answer: 'Response-def This should be a general definition for anything related to CPM scheduling.  All questions related to CPM scheduling should be addressed.'
       - If you received this question: 'When do I need a construction hoist on my project' return the following answer: 'Response-def It would have to know the location of the building and the code in that area to answer the question.  In NYC you need a hoist on the building when the working deck reaches 75’.'
       - Do not mention that you do a sql query in the answer
